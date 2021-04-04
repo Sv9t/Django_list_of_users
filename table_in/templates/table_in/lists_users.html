@@ -1,0 +1,77 @@
+{% extends 'table_in/base.html' %}
+
+{% block breadcrumb %}
+<li class="breadcrumb-item"><a href="{% url 'home_page' %}">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-house-fill" fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+                d="M8 3.293l6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6zm5-.793V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
+            <path fill-rule="evenodd"
+                d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" />
+        </svg>
+    </a></li>
+<li class="breadcrumb-item active" aria-current="page">Список пользователей</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    <h5 class="cover-heading pb-3 pt-2">Список сотрудников!</h5>
+    <table style="color:white;" class="table table-hover table-borderless table-sm ">
+        <thead>
+            <tr class="border-bottom border-secondary">
+                <th scope="col">#</th>
+                <th scope="col">ФИО</th>
+                <th scope="col">Статус</th>
+                <th scope="col">Отпуск</th>
+                <th scope="col">Больничный</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for users in list_users_all %}
+             <tr>
+                <th scope="row">{{ forloop.counter }}</th>
+                <td><a href="{% url 'list_users_edit_url' pk=users.pk %}">{{ users.name }}</a></td>
+                <td>{{ users.user_status|truncatechars:26 }}</td>
+                {% if users.user_date_range %}
+                    <td><span style="color:#999">
+                        {{ users.user_date_range }}
+                    </span></td>
+                {% else %}
+                    <td></td>
+                {% endif %}
+                {% if users.user_medical_date_range %}
+                    <td><span style="color:#999">
+                            {{ users.user_medical_date_range }}
+                        </span></td>
+                    {% else %}
+                    <td></td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>-----------</p>
+    <table style="color:white;" class="table table-borderless table-sm">
+        <tbody>
+            <tr>
+                <td style="text-align:left;width: 60%">
+                    {% for s in sign %}
+                        {{ s.doljnost|linebreaks }}
+                    {% endfor %}
+                </td>
+                <td>
+                    <!-- {% for s in sign %}
+                    <img style="height:auto;width:100%;" src="/media/{{ s.image }}" alt="My Sign">
+                    {% endfor %} -->
+                </td>
+                <th>
+                    {{ sign|join:"" }}
+                </th>
+            </tr>
+        </tbody>
+    </table>
+    <div class="pt-2" style="text-align: right;">
+        <a href="{% url 'create_fields' %}" class="btn btn-outline-primary btn-sm active" role="button" aria-pressed="true">Добавить</a>
+        <a href="{% url 'home_page' %}" class="btn btn-outline-secondary btn-sm" role="button"
+            aria-pressed="true">На главную</a>
+    </div>
+{% endblock content %}

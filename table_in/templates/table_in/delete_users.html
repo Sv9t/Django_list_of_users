@@ -1,0 +1,11 @@
+{% extends 'table_in/base.html' %}
+
+{% block content %}
+<form action="{{ tableusers.get_delete_url }}" method="post">
+    {% csrf_token %}
+    
+    <h3>Are U sure to delete <b>""</b> </h3>
+    <a href="#">Отмена</a>
+    <button type="submit" name="button" class="btn btn-danger">Удалить</button>
+</form>
+{% endblock content %}

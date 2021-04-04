@@ -1,0 +1,17 @@
+{% extends 'table_in/base.html' %}
+
+
+{% block content %}
+<h1 class="cover-heading">Обновить статус юзеров!</h1>
+
+<form action="{% url 'status_change' %}" method="post">
+    {% csrf_token %}
+    {% for i in form %}
+        {{ i.name }}
+    {% endfor %}
+    
+
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+</form>        
+        
+{% endblock content %}

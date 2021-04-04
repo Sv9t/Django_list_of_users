@@ -1,0 +1,62 @@
+<table class="table table-sm table-dark table-bordered">
+    <thead>
+        <tr>
+            <th scope="col">Наименование</th>
+            <th scope="col">По штату</th>
+            <th scope="col">По факту</th>
+            <th scope="col">Некомплект</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">Всего</th>
+            <td>
+                {{ user_shtat_all.count_shtat__sum }}
+            </td>
+            <td>
+                <!-- по факту -->
+                {{ st_users_all }}
+            </td>
+            <td>
+                <!-- Некомплект Всего -->
+                {{ nekompl_all }}
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">- средний и старший НС</th>
+            <td>
+                {{ user_shtat_one }}
+            </td>
+            <td>
+                {{ st_users_one }}
+            </td>
+            <td>
+                {{ nekompl_shtat_one }}
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">- рядовой и младший НС</th>
+            <td>
+                {{ user_shtat_two }}
+            </td>
+            <td>
+                {{ st_users_two }}
+            </td>
+            <td>
+                {{ nekompl_shtat_two }}
+            </td>
+        </tr>
+        <tr>
+            <th scope="row">- служащие</th>
+            <td>
+                {{ user_shtat_tree }}
+            </td>
+            <td>
+                {{ st_users_tree }}
+            </td>
+            <td>
+                {{ nekompl_shtat_tree }}
+            </td>
+        </tr>
+    </tbody>
+</table>

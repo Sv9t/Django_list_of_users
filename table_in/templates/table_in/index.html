@@ -1,0 +1,146 @@
+{% extends 'table_in/base.html' %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item">
+        <span><svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-house-fill" fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd"
+                d="M8 3.293l6 6V13.5a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 13.5V9.293l6-6zm5-.793V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z" />
+            <path fill-rule="evenodd"
+                d="M7.293 1.5a1 1 0 0 1 1.414 0l6.647 6.646a.5.5 0 0 1-.708.708L8 2.207 1.354 8.854a.5.5 0 1 1-.708-.708L7.293 1.5z" />
+        </svg></span>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Главная</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    <!-- {{ u.user_category|join:", " }} -->
+    
+    
+    <h5 class="pt-2 cover-heading">Строевая записка отдела ТПИС ЦАиТП ФКУ ГЦИТОиС ФСИН России</h5>
+    <h6 class="pb-2">{{ time_day }}</h6>
+    
+    {% include 'table_in/table_header.html' %}
+        
+    <table class="table table-sm table-dark table-bordered">
+        <tbody>
+            {% for s in status %}
+                {% if s.number == 1 %}
+                <tr class="d-flex">
+                    <th class="align-middle col-6">
+                        {{ s }}
+                    </th>
+                    <td class="col-6">
+                        {{ v_stroyu|length }} <br>
+                        {{ v_stroyu.all|join:", " }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if s.number == 2 %}
+                <tr class="d-flex">
+                    <th class="align-middle col-6">
+                        {{ s }}
+                    </th>
+                    <td class="col-6">
+                        {{ v_raspor|length }} <br>
+                        {{ v_raspor.all|join:", " }}
+                    </td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+                <tr class="d-flex">
+                    <th class="align-middle col-6">
+                        Отсутствуют
+                    </th>
+                    <td class="col-6">
+                        {{ otsutst|length }}
+                    </td>
+                </tr>
+            <!-- Блок с отсутствующими сотрудниками -->
+            {% for s in status_not_exist %}
+                <tr class="d-flex color-back">
+                    <td class="col-6">
+                        {{s}}
+                    </td>
+                    <td class="col-6">
+                        {% if s.count_names == 0 %}
+                            {{s.count_names}}
+                        {% else%}
+                            {% for ss in status_not_exist_annotate %}
+                                {% if ss.number == s.number and ss.number == 3 %}
+                                    {{ ss.num_names }}
+                                    {% for users in table_users_all %}
+                                        {% if users.name == ss.num_names %}
+                                        <span style="color:#999">
+                                            ({{ users.user_date_range }})
+                                        </span>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if not forloop.last %},{% endif %}
+                                {% elif ss.number == s.number and ss.number == 6 %}
+                                    {{ ss.num_names }}
+                                    {% for users in table_users_all %}
+                                        {% if users.name == ss.num_names %}
+                                        <span style="color:#999">
+                                            ({{ users.user_medical_date_range }})
+                                        </span>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% if not forloop.last %},{% endif %}
+                                {% elif ss.number == s.number %}
+                                    {{ss.num_names}}
+                                    {% if not forloop.last %},{% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            <!-- Конец блока с отсутствующими сотрудниками -->
+        </tbody>
+    </table>
+
+    <!-- START not COVID users -->
+    <table class="table table-sm table-dark table-bordered">
+        <tbody>
+            <tr class="d-flex color-back">
+                <td class="col-6">
+                    Прошли лабораторное обследование
+                </td>
+                <td class="col-6">
+                    {% for covid in table_users_all %}
+                        {% if covid.user_corona is True %}
+                            {% if not forloop.first %},{{ covid.name }}{% else %}{{ covid.name }}{% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <!-- END not COVID users -->
+    <table style="color:white;" class="table table-borderless table-sm">
+        <tbody>
+            <tr>
+                <th style="text-align:left;">
+                    {% for s in sign %}
+                        {{ s.doljnost|linebreaks }}
+                    {% endfor %}
+                </th>
+                <th style="height:70px;">
+                    <!-- {% for s in sign %}
+                        <img style="height: inherit;" src="/media/{{ s.image }}" alt="My Sign">
+                    {% endfor %} -->
+                </th>
+                <th style="vertical-align:bottom;">
+                    <p>{{ sign|join:"" }}</p>
+                </th>
+            </tr>
+        </tbody>
+    </table>
+    <!-- Buttons right -->
+    <div style="text-align: right;">
+        <a href="{% url 'generate_pdf' %}" class="btn btn-outline-primary btn-sm active" role="button" aria-pressed="true">Отправить</a>
+        <a target="_blank" href="{% url 'pdf_url' %}" class="btn btn-outline-secondary btn-sm active" role="button" aria-pressed="true">Предпросмотр</a>
+        <a href="{% url 'list_users_url' %}" class="btn btn-outline-secondary btn-sm" role="button" aria-pressed="true">Редактировать</a>
+    </div>
+{% endblock content %}

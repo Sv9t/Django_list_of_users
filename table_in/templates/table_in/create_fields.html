@@ -1,0 +1,18 @@
+{% extends 'table_in/base.html' %}
+
+
+{% block content %}
+<h3 class="cover-heading">Добавить сотрудника!</h3>
+
+<form action="{% url 'create_fields' %}" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div style="text-align: right;">
+        <button type="submit" class="btn btn-outline-primary btn-sm active">Сохранить</button>
+        <a href="{% url 'list_users_url' %}" class="btn btn-outline-secondary btn-sm" role="button"
+            aria-pressed="true">Назад</a>
+    </div>
+</form>        
+        
+{% endblock content %}

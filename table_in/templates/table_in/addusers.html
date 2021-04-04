@@ -1,0 +1,12 @@
+{% extends 'table_in/base.html' %}
+
+{% block content %}
+    <h1 class="cover-heading pb-5">Форма добавления пользователя</h1>
+    <form>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Добавить пользователя</label>
+            <input type="email" class="form-control" aria-describedby="formHelp">
+            <small id="formHelp" class="form-text text-muted">В имени использовать не более 100 символов.</small>
+        </div>
+    </form>
+{% endblock content %}

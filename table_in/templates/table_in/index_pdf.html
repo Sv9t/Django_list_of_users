@@ -1,0 +1,236 @@
+{% extends 'table_in/base_pdf.html' %}
+{% load static %}
+
+{% block content %}
+<!-- {{ u.user_category|join:", " }} -->
+<style type="text/css">
+    @page {
+        size: A4 portrait;
+        margin: 0.5cm 1.5cm;
+    }
+
+    @font-face {
+        font-family: 'Arial';
+        src: url("/static/arial.ttf");
+    }
+
+    body {
+        font-family: 'Arial', sans-serif;
+        font-size: 16px;
+        text-align: center;
+    }
+
+    .color-back {
+        background-color: #fff;
+    }
+
+    .table-bordered td,
+    .table-bordered th {
+        border: 1px solid #666;
+    }
+
+    .table>tbody>tr {
+        padding: 2pt 0 0 0;
+    }
+
+    .table>tbody>tr>th {
+        padding-top: 2px;
+    }
+
+    .back-gray {
+        background-color: #b3b3b3;
+    }
+    .max_img {
+        height:70px;
+        width: auto;
+        position: inherit;
+    }
+</style>
+
+<h3 style="font-size: 18px;" class="cover-heading">Строевая записка отдела ТПИС ЦАиТП ФКУ ГЦИТОиС ФСИН России</h3>
+<p>{{ time_day }}</p>
+
+<!-- Start header -->
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+            <tr style="padding-top: 5px;" class="back-gray">
+                <th style="width: 40%;">Наименование</th>
+                <th>По штату</th>
+                <th>По факту</th>
+                <th>Некомплект</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Всего</th>
+                <td>
+                    {{ user_shtat_all.count_shtat__sum }}
+                </td>
+                <td>
+                    <!-- по факту -->
+                    {{ st_users_all }}
+                </td>
+                <td>
+                    <!-- Некомплект Всего -->
+                    {{ nekompl_all }}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">- средний и старший НС</th>
+                <td>
+                    {{ user_shtat_one }}
+                </td>
+                <td>
+                    {{ st_users_one }}
+                </td>
+                <td>
+                    {{ nekompl_shtat_one }}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">- рядовой и младший НС</th>
+                <td>
+                    {{ user_shtat_two }}
+                </td>
+                <td>
+                    {{ st_users_two }}
+                </td>
+                <td>
+                    {{ nekompl_shtat_two }}
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">- служащие</th>
+                <td>
+                    {{ user_shtat_tree }}
+                </td>
+                <td>
+                    {{ st_users_tree }}
+                </td>
+                <td>
+                    {{ nekompl_shtat_tree }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<!-- End Header -->
+
+<table style="margin-top: 15px;" class="table table-bordered">
+    <tbody>
+        {% for s in status %}
+        {% if s.number == 1 %}
+        <tr class="d-flex back-gray">
+            <th class="col-6">
+                {{ s }}
+            </th>
+            <td class="col-6">
+                {{ v_stroyu|length }} <br>
+                {{ v_stroyu.all|join:", " }}
+            </td>
+        </tr>
+        {% endif %}
+        {% if s.number == 2 %}
+        <tr class="d-flex back-gray">
+            <th class="align-middle col-6">
+                {{ s }}
+            </th>
+            <td class="col-6">
+                {{ v_raspor|length }} <br>
+                {{ v_raspor.all|join:", " }}
+            </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+        <tr class="d-flex back-gray">
+            <th class="align-middle col-6">
+                Отсутствуют
+            </th>
+            <td class="col-6">
+                {{ otsutst|length }}
+            </td>
+        </tr>
+        <!-- Блок с отсутствующими сотрудниками -->
+        {% for s in status_not_exist %}
+        <tr class="d-flex color-back">
+            <th class="col-6">
+                {{s}}
+            </th>
+            <td class="col-6">
+                {% if s.count_names == 0 %}
+                    {{s.count_names}}
+                {% else %}
+                    {% for ss in status_not_exist_annotate %}
+                        {% if ss.number == s.number and ss.number == 3 %}
+                            {{ ss.num_names }}
+                            {% for users in table_users_all %}
+                                {% if users.name == ss.num_names %}
+                                    <span style="color:#999">
+                                        ({{ users.user_date_range }})
+                                    </span>
+                                {% endif %}
+                            {% endfor %}
+                            {% if not forloop.last %},{% endif %}
+                        {% elif ss.number == s.number and ss.number == 6 %}
+                            {{ ss.num_names }}
+                            {% for users in table_users_all %}
+                                {% if users.name == ss.num_names %}
+                                <span style="color:#999">
+                                    ({{ users.user_medical_date_range }})
+                                </span>
+                                {% endif %}
+                            {% endfor %}
+                            {% if not forloop.last %},{% endif %}
+                        {% elif ss.number == s.number %}
+                            {{ss.num_names}}
+                            {% if not forloop.last %},{% endif %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        <!-- Конец блока с отсутствующими сотрудниками -->
+    </tbody>
+</table>
+<!-- START not COVID users -->
+<table style="margin-top: 15px;" class="table table-bordered">
+    <tbody>
+        <tr class="d-flex color-back">
+            <th class="col-6">
+                Прошли лабораторное обследование
+            </th>
+            <td class="col-6">
+                {% for covid in table_users_all %}
+                    {% if covid.user_corona is True %}
+                        {{ covid.name }}
+                        <!-- {% if not forloop.last %},{% endif %} -->
+                    {% endif %}
+                {% endfor %}
+            </td>
+        </tr>
+    </tbody>
+</table>
+<!-- END not COVID users -->
+<table style="font-size: 16px;margin-top: 25px;" class="table table-borderless">
+    <tbody>
+        <tr>
+            <th style="text-align:left;width: 55%;">
+                {% for s in sign %}
+                    {{ s.doljnost|linebreaks }}
+                {% endfor %}
+            </th>
+            <!-- style="max-height:70px;" -->
+            <th>
+                   {% for s in sign %}
+                        <img class="max_img" src="/media/{{ s.image }}" alt="My Sign">
+                    {% endfor %} 
+            </th>
+            <th style="vertical-align:bottom;">
+                <p>{{ sign|join:"" }}</p>
+            </th>
+        </tr>
+    </tbody>
+</table>
+{% endblock content %}
